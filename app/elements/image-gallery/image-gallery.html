@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="image-gallery" attributes="">
+  <template>
+    <link rel="stylesheet" href="image-gallery.css">
+      <div id="galleryHeader"><strong>Gallery</strong></div>
+      <core-image id="coreImg"></core-image>
+      <div horizontal center-justified layout id="arrowHolder">
+          <div flex>
+              <paper-icon-button  horizontal layout center on-click="{{goBack}}" id="arrow-back" icon="arrow-back" title="arrow-back" role="button" tabindex="0" aria-label="arrow-back"></paper-icon-button>
+          </div>
+          <div flex>
+              <paper-icon-button horizontal layout center on-click="{{goNext}}" id="arrow-forward" icon="arrow-forward" title="arrow-forward" role="button" tabindex="0" aria-label="arrow-forward"></paper-icon-button>
+          </div>
+      </div>
+  </template>
+  <script>
+  (function () {
+  Polymer('image-gallery',{
+    imageArray : [],
+    currentImageNum:0,
+
+    domReady:function(){
+
+
+
+
+      var autoComplete = document.querySelector('auto-complete');
+      autoComplete.addEventListener('display-image-gallery', function(e){
+          this.displayGallery(e)
+        }.bind(this));
+    },
+     displayGallery:function(e){
+       this.$.coreImg.src = 'https://image.tmdb.org/t/p/w300/'+e.detail.response.backdrops[0].file_path;
+       this.imageArray = e.detail.response.backdrops;
+     },
+
+
+    makeTransition:function(){
+      this.animation.play();
+    },
+    goNext:function(){
+
+      if(this.currentImageNum != this.imageArray.length -1){
+        this.currentImageNum++;
+        this.updateImage();
+
+      }
+
+    },
+    goBack:function(){
+
+      if(this.currentImageNum != 0){
+        this.currentImageNum--;
+        this.updateImage();
+      }
+    },
+
+    updateImage: function(){
+      var animation = new CoreAnimation();
+      animation.duration = 500;
+      animation.target = this;
+      animation.fill = 'forwards';
+      animation.keyframes = [{opacity:'0'}, {opacity:'1'}];
+      animation.play();
+      this.$.coreImg.src =    'https://image.tmdb.org/t/p/w300/' + this.imageArray[this.currentImageNum].file_path;
+    }
+  });
+})();
+  </script>
+</polymer-element>

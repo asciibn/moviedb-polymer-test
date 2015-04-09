@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+
+@media (max-width: 640px) {
+  #overViewCopy{
+    width: 300px;
+    padding-bottom: 10px;
+    font-size: 10pt;
+
+  }
+
+  .detailCopyPadding{
+    padding-left: 0px;
+  }
+}

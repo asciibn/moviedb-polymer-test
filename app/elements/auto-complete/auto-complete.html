@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="auto-complete" attributes="">
+  <template>
+    <link rel="stylesheet" href="auto-complete.css">
+      <core-ajax auto id="getTMDB" handleAs="json" method="GET"></core-ajax>
+      <core-field>
+          <input id="searchField" type="text" name="searchField" is="core-input" placeholder="Search Movie or TV show" flex size="40" list="dl"  autocomplete="on">
+
+          <datalist id="dl">
+             <template repeat="{{result in response}}">
+                 <option id="{{result.id}}">{{result.original_name}}</option>
+             </template>
+          </datalist>
+          <paper-button raised id="submitButton" on-click="{{sendForm}}">Submit</paper-button>
+      </core-field>
+  </template>
+  <script>
+  (function () {
+Polymer('auto-complete',{
+  api_key: '',
+  currentShowID: '',
+  getShowNamesURL: 'https://api.themoviedb.org/3/search/multi?query=',
+  getShowDetailURL: 'https://api.themoviedb.org/3/tv/',
+  response:{},
+
+  sendForm: function(){
+     if(this.currentShowID !== ''){
+       this.getShowDetails();
+     }
+  },
+
+  publish:{
+    theMovieDBKey: ''
+  },
+
+  created: function () {
+
+  },
+
+
+
+  domReady:function(){
+
+
+    var searchField = this.shadowRoot.querySelector('#searchField');
+
+        searchField.addEventListener('keyup', function(e){
+          this.$.getTMDB.url = this.getShowNamesURL+ e.target.value + '&api_key=' + this.theMovieDBKey;
+          if(e.keyCode === 13){
+            this.sendForm();
+          }
+        }.bind(this));
+
+
+    searchField.addEventListener('input', function(){
+
+      var dataList = this.shadowRoot.querySelector('#dl');
+
+     for(var i = 0; i < dataList.options.length; i++){
+        if(searchField.value === dataList.options[i].value){
+             console.log(dataList.options[i].value);
+             console.log(dataList.options[i].id);
+          this.currentShowID = dataList.options[i].id;
+        }
+      }
+
+    }.bind(this));
+
+
+    this.$.getTMDB.addEventListener('core-response', function(e){
+      this.response = e.detail.response.results;
+      this.$.getTMDB.removeEventListener('core-response', arguments.callee);
+    }.bind(this));
+
+  },
+
+
+  getShowDetails: function(){
+
+    this.$.getTMDB.url =  this.getShowDetailURL+this.currentShowID+'?api_key='+this.theMovieDBKey;
+
+    this.$.getTMDB.addEventListener('core-response', function(e){
+      this.fire('display-show-details', {response: e.detail.response});
+      this.$.getTMDB.removeEventListener('core-response', arguments.callee);
+      this.loadImageGallery();
+    }.bind(this));
+
+  },
+
+
+  loadImageGallery:function(){
+    this.$.getTMDB.url =  this.getShowDetailURL+this.currentShowID+'/images?api_key='+this.theMovieDBKey;
+
+    this.$.getTMDB.addEventListener('core-response', function(e){
+      this.fire('display-image-gallery', {response: e.detail.response});
+
+    }.bind(this));
+  }
+
+});
+})();
+  </script>
+</polymer-element>

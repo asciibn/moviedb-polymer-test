@@ -1,0 +1,89 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="show-detail" attributes="">
+  <template>
+     
+      <link rel="stylesheet" href="show-detail.css">
+      <core-media-query query="max-width: 640px"
+                        queryMatches="{{phoneScreen}}"></core-media-query>
+      <div layout vertical?="{{phoneScreen}}"
+           horizontal?="{{!phoneScreen}}">
+          <core-image class="sized" id="showPosterImage"></core-image>
+
+          <div vertial layout class="detailCopyPadding">
+              <div id="showTitleHeader">
+                  <strong>{{showTitle}}</strong>
+              </div>
+
+              <div><strong>Overview:</strong></div>
+              <div id="overViewCopy">
+                  {{showOverview}}
+              </div>
+
+              <div>
+                  <image-gallery width="300" height="169" id="imageGallery"></image-gallery>
+              </div>
+
+          </div>
+      </div>
+  </template>
+  <script>
+  (function () {
+    Polymer('show-detail',{
+      showTitle:'',
+      showOverview:'',
+
+      fadeOut:function(){
+        var animation = new CoreAnimation();
+        animation.duration = 500;
+        animation.target = this;
+        animation.fill = 'forwards';
+        animation.keyframes = [{opacity:'1'}, {opacity:'0'}];
+        animation.play();
+
+        animation.addEventListener('core-animation-finish', function(){
+          animation.removeEventListener('core-animation-finish', arguments.callee);
+        }.bind(this));
+      },
+      fadeUp:function(){
+        var animation = new CoreAnimation();
+        animation.duration = 500;
+        animation.target = this;
+        animation.fill = 'forwards' ;
+        animation.keyframes = [{opacity:'0'}, {opacity:'1'}];
+        animation.play();
+
+        animation.addEventListener('core-animation-finish', function(){
+          animation.removeEventListener('core-animation-finish', arguments.callee);
+        }.bind(this));
+      },
+      ready:function(){
+        this.style.opacity = 0;
+
+      },
+      domReady:function(){
+
+
+
+           var autoComplete = document.querySelector('auto-complete');
+           var showTitleHeader = this.shadowRoot.querySelector('#showTitleHeader');
+           var posterImage = this.shadowRoot.querySelector('#showPosterImage');
+
+
+              autoComplete.addEventListener('display-show-details' , function(e){
+                //console.log(e);
+                //console.log(e.detail.response.original_name);
+                if(e.detail.response.poster_path !== undefined){
+                  showTitleHeader.templateInstance.model.showTitle = e.detail.response.original_name;
+                  showTitleHeader.templateInstance.model.showOverview = e.detail.response.overview;
+                  posterImage.src =  'https://image.tmdb.org/t/p/w185/'+ e.detail.response.poster_path;
+                  this.fadeUp();
+                }
+
+              }.bind(this));
+
+      },
+    });
+  })();
+  </script>
+</polymer-element>

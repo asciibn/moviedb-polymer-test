@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+@media (max-width: 640px) {
+  #overViewCopy{
+    width: 300px;
+    padding-bottom: 10px;
+    font-size: 10pt;
+
+  }
+
+  .detailCopyPadding{
+    padding-left: 0px;
+  }
+}
+
+
+
+@media (min-width: 1000px){
+  #overViewCopy{
+    width: 600px;
+    padding-bottom: 10px;
+    font-size: 10pt;
+
+  }
+
+  .detailCopyPadding{
+    padding-left: 30px;
+  }
+
+  #showTitleHeader{
+    padding-bottom: 10px;
+  }
+
+
+  #showPosterImage{
+    width: 185px;
+    height: 272px;
+  }
+}
+
+
+@media (max-width: 640px) {
+  #overViewCopy{
+    width: 300px;
+    padding-bottom: 10px;
+    font-size: 10pt;
+
+  }
+
+  .detailCopyPadding{
+    padding-left: 0px;
+  }
+}
